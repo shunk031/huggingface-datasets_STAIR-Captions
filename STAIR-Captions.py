@@ -14,8 +14,6 @@
 #
 # This script was generated from shunk031/cookiecutter-huggingface-datasets.
 #
-# TODO: Address all TODOs and remove all explanatory comments
-import json
 import os
 from dataclasses import dataclass
 from typing import List
@@ -23,8 +21,7 @@ from typing import List
 import datasets as ds
 from datasets.utils.logging import get_logger
 from hfcocoapi.processors import CaptionsProcessor
-from hfcocoapi.typehint import JsonDict, LicenseId
-from PIL.Image import Image
+from hfcocoapi.typehint import MscocoSplits
 
 logger = get_logger(__name__)
 
@@ -72,6 +69,7 @@ _URLS = {
 
 @dataclass
 class StairCaptionsConfig(ds.BuilderConfig):
+    year: int = 2014
     is_tokenized: bool = False
 
     def __post_init__(self) -> None:
@@ -89,7 +87,6 @@ class StairCaptionsConfig(ds.BuilderConfig):
             raise ValueError(f"Invalid configuration version: {self.name}")
 
 
-# TODO: Name of the dataset usually matches the script name with CamelCase instead of snake_case
 class StairCaptionsDataset(ds.GeneratorBasedBuilder):
     """A class for loading STAIR-Captions dataset."""
 
@@ -118,23 +115,12 @@ class StairCaptionsDataset(ds.GeneratorBasedBuilder):
     DEFAULT_CONFIG_NAME = "v1.2.0"
 
     def _info(self) -> ds.DatasetInfo:
-        # TODO: This method specifies the datasets.DatasetInfo object which contains informations and typings for the dataset
-        features = ds.Features(
-            # You need to define the internal structure of your dataset here
-        )
+        processor = CaptionsProcessor()
         return ds.DatasetInfo(
-            # This is the description that will appear on the datasets page.
             description=_DESCRIPTION,
-            # This defines the different columns of the dataset and their types
-            features=features,  # Here we define them above because they are different between the two configurations
-            # If there's a common (input, target) tuple from the features, uncomment supervised_keys line below and
-            # specify them. They'll be used if as_supervised=True in builder.as_dataset.
-            # supervised_keys=("sentence", "label"),
-            # Homepage of the dataset for documentation
+            features=processor.get_features(),
             homepage=_HOMEPAGE,
-            # License for the dataset if available
             license=_LICENSE,
-            # Citation for the dataset
             citation=_CITATION,
         )
 
@@ -190,28 +176,39 @@ class StairCaptionsDataset(ds.GeneratorBasedBuilder):
             ds.SplitGenerator(
                 name=ds.Split.TRAIN,  # type: ignore
                 gen_kwargs={
-                    "ann_filepath": get_tng_filepath(ann_file_paths),
-                    "img_filepath": img_file_paths["train"],  # type: ignore
+                    "split": "train",
+                    "base_image_dir": img_file_paths["train"],  # type: ignore
+                    "annotation_path": get_tng_filepath(ann_file_paths),
                 },
             ),
             ds.SplitGenerator(
                 name=ds.Split.VALIDATION,  # type: ignore
                 gen_kwargs={
-                    "ann_filepath": get_val_filepath(ann_file_paths),
-                    "img_filepath": img_file_paths["validation"],  # type: ignore
+                    "split": "val",
+                    "base_image_dir": img_file_paths["validation"],  # type: ignore
+                    "annotation_path": get_val_filepath(ann_file_paths),
                 },
             ),
         ]
 
     # method parameters are unpacked from `gen_kwargs` as given in `_split_generators`
-    def _generate_examples(self, filepath: str):
+    def _generate_examples(
+        self, split: MscocoSplits, base_image_dir: str, annotation_path: str
+    ):
+        config: StairCaptionsConfig = self.config  # type: ignore
+        image_dir = os.path.join(base_image_dir, f"{split}{config.year}")
         processor = CaptionsProcessor()
-        ann_json = processor.load_annotation_json(ann_file_path=filepath)
+        ann_json = processor.load_annotation_json(ann_file_path=annotation_path)
 
         licenses = processor.load_licenses_data(license_dicts=ann_json["licenses"])
         images = processor.load_images_data(image_dicts=ann_json["images"])
-        annotations = processor.load_data(
-            ann_dicts=ann_json["annotations"], images=images
-        )
 
-        breakpoint()
+        yield from processor.generate_examples(
+            annotations=processor.load_data(
+                ann_dicts=ann_json["annotations"],
+                images=images,
+            ),
+            image_dir=image_dir,
+            images=images,
+            licenses=licenses,
+        )

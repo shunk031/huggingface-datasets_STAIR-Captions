@@ -1,9 +1,27 @@
-<!-- 
 ---
-TODO: YAML tags (full spec here: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1):
-- copy-paste the tags obtained with the online tagging app: https://huggingface.co/spaces/huggingface/datasets-tagging
---- 
--->
+annotations_creators:
+- crowdsourced
+language:
+- ja
+language_creators:
+- found
+license:
+- cc-by-4.0
+multilinguality:
+- monolingual
+pretty_name: STAIR Captions is a large-scale dataset containing 820,310 Japanese captions.
+size_categories:
+- 100K<n<1M
+source_datasets:
+- extended|MSCOCO
+tags:
+- image-captioning
+- mscoco
+task_categories:
+- image-to-text
+task_ids:
+- image-captioning
+---
 
 # Dataset Card for STAIR-Captions
 
@@ -46,18 +64,17 @@ TODO: YAML tags (full spec here: https://github.com/huggingface/hub-docs/blob/ma
 - **Repository:** https://github.com/shunk031/huggingface-datasets_STAIR-Captions
 - **Paper (Preprint):** https://arxiv.org/abs/1705.00823
 - **Paper (ACL'17):** https://aclanthology.org/P17-2066/
-- **Leaderboard:** [TODO: If the dataset supports an active leaderboard, add link here]()
-- **Point of Contact:** [TODO: If known, name and email of at least one person the reader can contact for questions about the dataset.]()
+- **Point of Contact:** info_AT_stair.center
 
 ### Dataset Summary
 
-[More Information Needed]
-
-<!-- Briefly summarize the dataset, its intended use and the supported tasks. Give an overview of how and why the dataset was created. The summary should explicitly mention the languages present in the dataset (possibly in broad terms, e.g. *translations between several pairs of European languages*), and describe the domain, topic, or genre covered. -->
+STAIR Captions is a large-scale dataset containing 820,310 Japanese captions. This dataset can be used for caption generation, multimodal retrieval, and image generation.
 
 ### Supported Tasks and Leaderboards
 
 [More Information Needed]
+
+<!-- From [STAIR Captions's paper](https://aclanthology.org/P17-2066/): -->
 
 <!-- For each of the tasks tagged for this dataset, give a brief description of the tag, metrics, and suggested models (with a link to their HuggingFace implementation if available). Give a similar description of tasks that were not covered by the structured tag set (repace the `task-category-tag` with an appropriate `other:other-task-name`).
 
@@ -65,7 +82,7 @@ TODO: YAML tags (full spec here: https://github.com/huggingface/hub-docs/blob/ma
 
 ### Languages
 
-[More Information Needed]
+The language data in JDocQA is in Japanese ([BCP-47 ja-JP](https://www.rfc-editor.org/info/bcp47)).
 
 <!-- Provide a brief overview of the languages represented in the dataset. Describe relevant details about specifics of the language such as whether it is social media text, African American English,...
 
@@ -221,28 +238,20 @@ If analyses have been run quantifying these biases, please add brief summaries a
 
 ### Licensing Information
 
-[More Information Needed]
-
-<!-- Provide the license and link to the license webpage if available. -->
+[Creative Commons Attribution 4.0 License.](https://creativecommons.org/licenses/by/4.0/legalcode)
 
 ### Citation Information
 
-<!-- Provide the [BibTex](http://www.bibtex.org/)-formatted reference for the dataset. For example:
-```
-@article{article_id,
-  author    = {Author List},
-  title     = {Dataset Paper Title},
-  journal   = {Publication Venue},
-  year      = {2525}
-}
-```
-
-If the dataset has a [DOI](https://www.doi.org/), please provide it here. -->
-
 ```bibtex
-TODO: Add BibTeX citation here
+@inproceedings{yoshikawa2017stair,
+  title={STAIR Captions: Constructing a Large-Scale Japanese Image Caption Dataset},
+  author={Yoshikawa, Yuya and Shigeto, Yutaro and Takeuchi, Akikazu},
+  booktitle={Proceedings of the 55th Annual Meeting of the Association for Computational Linguistics (Volume 2: Short Papers)},
+  pages={417--421},
+  year={2017}
+}
 ```
 
 ### Contributions
 
-<!-- TODO: Thanks to [@github-username](https://github.com/<github-username>) for adding this dataset. -->
+Thanks to [@yuyay](https://github.com/yuyay) for creating this dataset.
